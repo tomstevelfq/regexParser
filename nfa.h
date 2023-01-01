@@ -4,6 +4,7 @@
 #include<string>
 #include"lexer.h"
 #include"global.h"
+#include<map>
 using namespace std;
 class NFA{
     public:
@@ -39,4 +40,5 @@ class NFABuilder{
         bool expr(pair<NFA*,NFA*>& pair);
         bool group(pair<NFA*,NFA*>& pair);
 };
+void move(set<NFA*>& st,char ch);
 #endif

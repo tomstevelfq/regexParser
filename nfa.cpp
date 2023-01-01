@@ -265,3 +265,13 @@ bool NFABuilder::group(pair<NFA*,NFA*>& npair){
         }
     }
 }
+
+void move(set<NFA*>& st,char ch){
+    auto out_set=set<NFA*>();
+    for(auto it:st){
+        if(it->type==CHAR&&it->edge==ch||it->type==ANYCHAR||it->type==SETS&&it->st.find(ch)!=it->st.end()){
+            out_set.insert(it->link1);
+        }
+    }
+    st=out_set;
+}

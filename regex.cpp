@@ -1,9 +1,12 @@
-#include"nfa.h"
 #include"regex.h"
 #include<iostream>
 #include<string>
 #include<stack>
 #include<vector>
+#include<set>
+#include<map>
+#include<time.h>
+#include<stdio.h>
 using namespace std;
 
 Regex::Regex(string patstr,int mode,bool minimize){
@@ -17,41 +20,11 @@ void Regex::build(){
     if(this->mode==1){
         nfa=NFABuilder(pattern_str);
         nfa.build();
-    }
-}
+    }else if(this->mode==2){
+        dfa=DFABuilder(pattern_str);
+        dfa.build();
+        if(minimize){
 
-void Regex::move(set<NFA*>& st,char ch){
-    auto out_set=set<NFA*>();
-    for(auto it:st){
-        if(it->edge==ch||it->type==ANYCHAR||it->type==SETS&&it->st.find(ch)!=it->st.end()){
-            out_set.insert(it->link1);
-        }
-    }
-    st=out_set;
-}
-
-void Regex::closure_set(set<NFA*>& st){
-    if(st.size()==0){
-        return;
-    }
-    stack<NFA*> stk;
-    for(auto it : st){
-        stk.push(it);
-    }
-    while(!stk.empty()){
-        auto nfa=stk.top();
-        stk.pop();
-        if(nfa->link1&&nfa->type==EMPTY){
-            if(st.find(nfa->link1)==st.end()){
-                st.insert(nfa->link1);
-                stk.push(nfa->link1);
-            }
-        }
-        if(nfa->link2&&nfa->type==EMPTY){
-            if(st.find(nfa->link2)==st.end()){
-                st.insert(nfa->link2);
-                stk.push(nfa->link2);
-            }
         }
     }
 }
@@ -83,26 +56,31 @@ bool Regex::match(string inpstr){
              }
         }
     }else if(mode==2){
-        return false;
+        return dfa.dfa_match(inpstr);
     }
     return false;
 }
 
 int main(){
+    clock_t start,end;
+    start=clock();
     vector<Sample> samples={
-        {"THI","([A-Z]*|[0-9]+)",true},
+        {"T6","([A-Z]+[0-9]+)",true},
         {"THISISREGEXTEST","([A-Z]+[0-9]+)",false},
         {"234234abcdefg[*+","([A-Z]+[0-9]*abcdefg)(\\[\\*\\+)",false},
         {"AS342abcdefg234aaaaabccccczczxczcasdzxc","([A-Z]+[0-9]*abcdefg)([0-9]*)(\\*?|a+)(zx|bc*)([a-z]+|[0-9]*)(asd|fgh)(zxc)",true},
-        {"abc","[^0-9]*",true}
+        {"abc","[^0-9]*",true},
+        {"abbbbb","[^c]+", true}
     };
     for(auto it:samples){
-        Regex reg(it.pattern);
+        Regex reg(it.pattern,1);
         if(reg.match(it.input_str)==it.result){
             log("RIGHT");
         }else{
             log("WRONG");
         }
     }
+    end=clock();
+    cout<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;
 }

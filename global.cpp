@@ -1,6 +1,8 @@
 #include"global.h"
 #include<string>
 #include<iostream>
+#include<set>
+#include<stack>
 using namespace std;
 map<char,Token> TokenMap{
     {'.',ANY},

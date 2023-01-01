@@ -1,8 +1,8 @@
-CC=g++ -g
+CC=g++
 RM=del
 target=regex.exe
 Outputs=Outputs\\
-ofile=$(Outputs)nfa.o $(Outputs)regex.o $(Outputs)lexer.o $(Outputs)global.o
+ofile=$(Outputs)nfa.o $(Outputs)regex.o $(Outputs)lexer.o $(Outputs)global.o $(Outputs)dfa.o
 header=nfa.h
 $(target):$(ofile) $(header)
 	$(CC) $(ofile) -o $(target)
@@ -14,5 +14,7 @@ $(Outputs)lexer.o:lexer.cpp $(header)
 	$(CC) lexer.cpp -c -o $(Outputs)lexer.o
 $(Outputs)global.o:global.cpp $(header)
 	$(CC) global.cpp -c -o $(Outputs)global.o
+$(Outputs)dfa.o:dfa.cpp $(header)
+	$(CC) dfa.cpp -c -o $(Outputs)dfa.o
 clean:
 	$(RM) $(ofile) regex.exe
