@@ -17,14 +17,17 @@ Regex::Regex(string patstr,int mode,bool minimize){
 }
 
 void Regex::build(){
+    DFA::counter=0;
+    NFA::counter=0;
+    DFAGroup::counter=0;
     if(this->mode==1){
         nfa=NFABuilder(pattern_str);
         nfa.build();
     }else if(this->mode==2){
-        dfa=DFABuilder(pattern_str);
+        dfa=DFABuilder(pattern_str,minimize);
         dfa.build();
         if(minimize){
-
+            dfa.minimize_dfa(dfa.table);
         }
     }
 }
@@ -70,10 +73,27 @@ int main(){
         {"234234abcdefg[*+","([A-Z]+[0-9]*abcdefg)(\\[\\*\\+)",false},
         {"AS342abcdefg234aaaaabccccczczxczcasdzxc","([A-Z]+[0-9]*abcdefg)([0-9]*)(\\*?|a+)(zx|bc*)([a-z]+|[0-9]*)(asd|fgh)(zxc)",true},
         {"abc","[^0-9]*",true},
-        {"abbbbb","[^c]+", true}
+        {"abbbbb","[^c]+", true},
+        {"fee","fee|fie", true},
     };
-    for(auto it:samples){
-        Regex reg(it.pattern,1);
+    for(auto it:samples){//NFA测试
+        Regex reg(it.pattern);
+        if(reg.match(it.input_str)==it.result){
+            log("RIGHT");
+        }else{
+            log("WRONG");
+        }
+    }
+    for(auto it:samples){//DFA测试
+        Regex reg(it.pattern,2);
+        if(reg.match(it.input_str)==it.result){
+            log("RIGHT");
+        }else{
+            log("WRONG");
+        }
+    }
+    for(auto it:samples){//DFA minimize测试
+        Regex reg(it.pattern,2,true);
         if(reg.match(it.input_str)==it.result){
             log("RIGHT");
         }else{

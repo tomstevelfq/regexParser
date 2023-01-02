@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -g
 RM=del
 target=regex.exe
 Outputs=Outputs\\
